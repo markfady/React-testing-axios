@@ -9,7 +9,9 @@ export const useFetchData = (url: string) => {
     const abortController = new AbortController();
     const fetchData = async () => {
       try {
-        const res = await axios.get(url);
+        //Without the signal option, calling abort() won't affect the request, as the request won't be associated with an AbortController.
+        //This means that when the cleanup function runs (upon component unmount or url change), calling abort() on the AbortController won't have any effect
+        const res = await axios.get(url,{signal:abortController.signal});
         setData(res.data);
       } catch (error) {
         setError(error);
